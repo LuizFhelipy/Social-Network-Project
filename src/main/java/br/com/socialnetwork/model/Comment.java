@@ -8,10 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-
 @Entity
 public class Comment {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String message;
 	@ManyToOne
@@ -19,6 +19,17 @@ public class Comment {
 	private LocalDateTime creationDate = LocalDateTime.now();
 	@ManyToOne
 	private User author;
+	
+	public Comment() {
+		
+	}
+
+	public Comment(String message, Publication publication, User author) {
+		this.message = message;
+		this.publication = publication;
+		this.author = author;
+		
+	}
 
 	@Override
 	public int hashCode() {
@@ -85,6 +96,4 @@ public class Comment {
 		this.author = author;
 	}
 
-
 }
-

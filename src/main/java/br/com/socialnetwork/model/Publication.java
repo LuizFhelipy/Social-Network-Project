@@ -18,6 +18,7 @@ public class Publication {
 	private Long id;
 	private String title;
 	private String message;
+	private String media;
 	private LocalDateTime creationDate = LocalDateTime.now();
 	@ManyToOne
 	private User author;
@@ -28,11 +29,13 @@ public class Publication {
 
 	}
 
-	public Publication(String title, String message) {
-		super();
+	public Publication(String title, String message, String media, User user) {
 		this.title = title;
 		this.message = message;
+		this.media = media;
+		this.author = user;
 	}
+
 
 	@Override
 	public int hashCode() {
@@ -71,7 +74,7 @@ public class Publication {
 		return title;
 	}
 
-	public void setTitulo(String title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
@@ -89,6 +92,14 @@ public class Publication {
 
 	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
+	}
+	
+	public String getMedia() {
+		return media;
+	}
+
+	public void setMedia(String media) {
+		this.media = media;
 	}
 
 	public User getAuthor() {
