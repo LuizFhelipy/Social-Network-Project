@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,10 +43,10 @@ public class CommentsController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<CommentDto> register(@RequestBody @Valid CommentForm commentForm,
+	public ResponseEntity<CommentDto> register(Authentication authentication, @RequestBody @Valid CommentForm commentForm,
 			UriComponentsBuilder uriBuilder, @PathVariable Long id) {
-		long userid = 1;
-		User user = userRepository.getOne(userid);
+		User authenticatedUser = (User) authentication.getPrincipal();
+		User user = userRepository.getOne(authenticatedUser.getId());
 		Optional<Publication> publication = publicationRepository.findById(id);
 		if(publication.isPresent()) {
 			Comment comment = commentForm.converter(publication.get(),user);
@@ -60,8 +61,11 @@ public class CommentsController {
 	
 	@PutMapping("/{idcomment}")
 	@Transactional
-	public ResponseEntity<CommentDto> update(@PathVariable("idcomment") Long id,
+	public ResponseEntity<CommentDto> update(Authentication authentication, @PathVariable("idcomment") Long id,
 			@RequestBody @Valid UpdateCommentForm commentForm) {
+		User authenticatedUser = (User) authentication.getPrincipal();
+		@SuppressWarnings("unused")
+		User user = userRepository.getOne(authenticatedUser.getId());
 		Optional<Comment> optional = commentRepository.findById(id);
 		if (optional.isPresent()) {
 			Comment comment = commentForm.update(id, commentRepository);
@@ -74,7 +78,10 @@ public class CommentsController {
 	
 	@DeleteMapping("/{idcomment}")
 	@Transactional
-	public ResponseEntity<?> delete(@PathVariable("idcomment") Long id) {
+	public ResponseEntity<?> delete(Authentication authentication, @PathVariable("idcomment") Long id) {
+		User authenticatedUser = (User) authentication.getPrincipal();
+		@SuppressWarnings("unused")
+		User user = userRepository.getOne(authenticatedUser.getId());
 		Optional<Comment> optional = commentRepository.findById(id);
 		if (optional.isPresent()) {
 			commentRepository.deleteById(id);

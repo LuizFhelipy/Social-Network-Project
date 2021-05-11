@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,7 +54,7 @@ public class PublicationsController {
 	@GetMapping
 	@Cacheable(value = "listoftopics")
 	public Page<PublicationDto> list(@RequestParam(required = false) String author,
-			@PageableDefault(sort = "id", direction = Direction.ASC)Pageable pagination) {
+			@PageableDefault(sort = "id", direction = Direction.ASC) Pageable pagination) {
 
 		if (author == null) {
 			Page<Publication> publications = publicationRepository.findAll(pagination);
@@ -69,15 +70,17 @@ public class PublicationsController {
 	@PostMapping
 	@Transactional
 	@CacheEvict(value = "listoftopics", allEntries = true)
-	public ResponseEntity<PublicationDto> register(@RequestParam("title") String title,
-			@RequestParam("message") String message, @RequestParam("file") MultipartFile file,
+	public ResponseEntity<PublicationDto> register(Authentication authentication, @RequestParam("title") String title,
+			@RequestParam("message") String message, @RequestParam(value = "file", required = false) MultipartFile file,
 			UriComponentsBuilder uriBuilder) throws IOException {
-		long userid = 1;
-		User user = userRepository.getOne(userid);
-		Map uploadResult = cloudinaryService.upload(file, "publication");
+		User authenticatedUser = (User) authentication.getPrincipal();
+		User user = userRepository.getOne(authenticatedUser.getId());
+		String media = "https://res.cloudinary.com/luizfhelipy/image/upload/v1620666027/socialnetwork/publication/feed-instagram_xsqesa.png";
+		if (file != null) {
+			Map uploadResult = cloudinaryService.upload(file, "publication");
+			media = uploadResult.get("public_id").toString() + "." + uploadResult.get("format").toString();
+		}
 
-		String media = uploadResult.get("public_id").toString() + "." + uploadResult.get("format").toString();
-		System.out.println(media);
 		Publication publication = new Publication(title, message, media, user);
 		publicationRepository.save(publication);
 
@@ -99,8 +102,11 @@ public class PublicationsController {
 	@PutMapping("/{id}")
 	@Transactional
 	@CacheEvict(value = "listoftopics", allEntries = true)
-	public ResponseEntity<PublicationDto> update(@PathVariable Long id,
+	public ResponseEntity<PublicationDto> update(Authentication authentication, @PathVariable Long id,
 			@RequestBody @Valid UpdatePublicationForm publicationForm) {
+		User authenticatedUser = (User) authentication.getPrincipal();
+		@SuppressWarnings("unused")
+		User user = userRepository.getOne(authenticatedUser.getId());
 		Optional<Publication> optional = publicationRepository.findById(id);
 		if (optional.isPresent()) {
 			Publication publication = publicationForm.update(id, publicationRepository);
@@ -114,7 +120,10 @@ public class PublicationsController {
 	@DeleteMapping("/{id}")
 	@Transactional
 	@CacheEvict(value = "listoftopics", allEntries = true)
-	public ResponseEntity<?> delete(@PathVariable Long id) {
+	public ResponseEntity<?> delete(Authentication authentication, @PathVariable Long id) {
+		User authenticatedUser = (User) authentication.getPrincipal();
+		@SuppressWarnings("unused")
+		User user = userRepository.getOne(authenticatedUser.getId());
 		Optional<Publication> optional = publicationRepository.findById(id);
 		if (optional.isPresent()) {
 			publicationRepository.deleteById(id);
