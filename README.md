@@ -21,20 +21,31 @@
 
 📝 Design Patterns
 -----
-  ### Model
+  ### Model  
+  Data holder, receives information from Controller, validates
+  or not and returns the appropriate answer.
+
   Detentor dos dados, recebe as informações do Controller, valida
   ou não e retorna a resposta adequada.
 
   ### Controller
+  Provides communication between the data holder and the customer.
+
   Fornece a comunicação entre o detentor dos dados e o cliente.
 
   ### Repository
+  Data consultation and manipulation interface, used to create a control and security barrier between the application and the data.  
+
   Interface de consulta e manipulação dos dados, utilizado para criar uma barreira de controle e segurança entre a aplicação e os dados.
 
   ### DTO
+  Used to transfer data between software subsystems.
+
   Utilizado para transferir dados entre subsistemas do software.
 
   ### Form 
+  Utilizado para transferir dados entre subsistemas do software.
+
   Utilizado para transferir dados entre subsistemas do software.
 
 
