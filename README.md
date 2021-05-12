@@ -147,7 +147,6 @@
     POST /user
    ```
 
-   ```
    DELETE /user/{id}
    ```
    
