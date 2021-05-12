@@ -33,6 +33,7 @@ public class User implements UserDetails{
 	private String email;
 	private String password;
 	@OneToMany(mappedBy = "author", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Publication> publication = new ArrayList<>();
 	@OneToMany(mappedBy = "author", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OnDelete(action = OnDeleteAction.CASCADE)

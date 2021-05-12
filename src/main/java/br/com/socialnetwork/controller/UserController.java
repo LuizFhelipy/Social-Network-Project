@@ -7,14 +7,8 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.socialnetwork.controller.dto.PublicationDto;
-import br.com.socialnetwork.controller.dto.UserDetailDto;
 import br.com.socialnetwork.controller.dto.UserDto;
 import br.com.socialnetwork.controller.form.UserForm;
-import br.com.socialnetwork.model.Publication;
 import br.com.socialnetwork.model.User;
 import br.com.socialnetwork.repository.UserRepository;
 
@@ -46,31 +37,6 @@ public class UserController {
 		URI uri = uriBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 		return ResponseEntity.created(uri).body(new UserDto(user));
 
-	}
-
-	@GetMapping("/{id}/publications")
-	public ResponseEntity<Page<PublicationDto>> publicationlist(Authentication authentication, @PathVariable Long id,
-			@PageableDefault(sort = "id", direction = Direction.DESC, page = 0, size = 10) Pageable pagination) {
-		User authenticatedUser = (User) authentication.getPrincipal();
-		User userlogged = userRepository.getOne(authenticatedUser.getId());
-		Optional<User> user = userRepository.findById(id);
-
-		if (user.isPresent() && user.get().getId() == userlogged.getId()) {
-			@SuppressWarnings("unchecked")
-			Page<PublicationDto> publication = PublicationDto.converter((Page<Publication>) user.get().getPublication());
-			return ResponseEntity.status(200).body(publication);
-		}
-		return ResponseEntity.status(404).build();
-	}
-
-	@GetMapping("/{id}")
-	public ResponseEntity<UserDetailDto> detail(@PathVariable Long id) {
-
-		Optional<User> optional = userRepository.findById(id);
-		if (optional.isPresent()) {
-			return ResponseEntity.ok(new UserDetailDto(optional.get()));
-		}
-		return ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
