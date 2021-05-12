@@ -144,7 +144,6 @@
    Authorization Bearer {{token}}
    ```
   #### Paths
-    ```
     POST /user
    ```
 
