@@ -21,7 +21,7 @@ class PublicationRepositoryTest {
 	private PublicationRepository publicationRepository;
 
 	@Test
-	void ShoultfindByAuthorName() {
+	void ShouldfindByAuthorName() {
 		Pageable pageable = null;
 		String author = "Luiz";
 		Page<Publication> publicationtest = publicationRepository.findByAuthorName(author, pageable);
@@ -30,7 +30,7 @@ class PublicationRepositoryTest {
 	}
 	
 	@Test
-	void ShoultfindById() {
+	void ShoudtfindById() {
 		Long id = 1L;
 		Optional<Publication> publicationtest =  publicationRepository.findById(id);
 		

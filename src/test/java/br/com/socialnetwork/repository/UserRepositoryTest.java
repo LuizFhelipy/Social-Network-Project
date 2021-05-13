@@ -19,7 +19,7 @@ class UserRepositoryTest {
 	private UserRepository userRepository;
 	
 	@Test
-	void ShoultfindByEmail() {
+	void ShouldfindByEmail() {
 		String email = "luiz@email.com";
 		Optional<User> usertest = userRepository.findByEmail(email);
 		
